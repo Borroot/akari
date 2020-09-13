@@ -30,4 +30,23 @@ ostream &operator<<(ostream &out, const Puzzle &puzzle)
 	return out;
 }
 
+ostream &operator<<(ostream &out, const Pos &pos)
+{
+	out << "(" << pos.x << "," << pos.y << ")";
+	return out;
+}
+
+ostream &operator<<(ostream &out, const Solution &solution)
+{
+	out	<< "[";
+	for (int i = 0; i < (int)solution.size(); i++) {
+		out << solution[i];
+		if (i < (int)solution.size() - 1) {
+			out << ",";
+		}
+	}
+	out << "]" << endl;
+	return out;
+}
+
 #endif

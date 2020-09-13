@@ -1,5 +1,6 @@
 #include <fstream>
 #include <string>
+#include "read.h"
 #include "puzzle.h"
 
 using namespace std;
