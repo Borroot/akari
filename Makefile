@@ -14,7 +14,7 @@ BIN_OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(BIN_SRC_FILES))
 # Flags
 # -----------------------------------------------------------------------------
 
-EXTRAS        = -Wno-unused-parameter -Wno-unused-variable
+EXTRAS        = -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function
 CFLAGS        = -Wall -Wextra -Werror -pedantic $(EXTRAS)
 IFLAGS        = -I $(INC_DIR)
 
