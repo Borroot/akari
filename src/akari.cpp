@@ -11,8 +11,8 @@ int main(void)
 {
 	string codex = read("misc/7x7_easy", 0);
 	Puzzle puzzle = convert(codex, 7, 7);
-	Solution solution = solve_backtrack(puzzle);
-	cout << puzzle << solution;
+	vector<Solution> solutions = solve_backtrack(puzzle);
+	cout << puzzle << solutions;
 
 	return 0;
 }
