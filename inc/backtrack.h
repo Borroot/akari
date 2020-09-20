@@ -3,6 +3,6 @@
 
 #include "puzzle.h"
 
-Solution solve_backtrack(const Puzzle &);
+Solution solve_backtrack(const Puzzle &puzzle);
 
 #endif
