@@ -36,6 +36,26 @@ def z3solve(puzzle, timed=False):
         return solution
 
 
+def z3solves(puzzle, timed=False):
+    positions, bvars, solver = _initialize(puzzle)
+
+    if timed: start = time.time()
+
+    solutions = []
+    while solver.check() == sat:
+        solution = _solution(positions, bvars, solver.model())
+        solutions.append(solution)
+        constraints = Not(And([bvars[x, y] for (x, y) in solution]))
+        solver.add(constraints)
+
+    if timed: end = time.time()
+
+    if timed:
+        return solutions, end - start
+    else:
+        return solutions
+
+
 def z3unique(puzzle, timed=False):
     positions, bvars, solver = _initialize(puzzle)
 
