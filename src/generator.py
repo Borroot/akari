@@ -111,8 +111,8 @@ def _place_numbers(puzzle, positions):
 
         puzzle[y][x] = count
 
-    # display(puzzle)
-    # print()
+    display(puzzle)
+    print()
 
 
 def generate(height, width, start=None, step=None, symmetrical=None):
@@ -129,5 +129,6 @@ def generate(height, width, start=None, step=None, symmetrical=None):
         _place_blocks(puzzle, positions, step, symmetrical, solutions)
         _place_numbers(puzzle, positions)
 
+    print('removing the numbers...')
     _remove_some_numbers(puzzle, positions)
     return puzzle, z3solve(puzzle)
