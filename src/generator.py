@@ -64,7 +64,7 @@ def generate(height, width, start=None, step=None, symmetrical=True):
     positions = _initialize(puzzle)
 
     big = width if width > height else height
-    start = big if start is None else max(start, (width * height) // 2)
+    start = big if start is None else min(start, (width * height) // 2)
     step = min(1, big // 3) if step is None else step
 
     _place_blocks(puzzle, positions, start, symmetrical)
@@ -72,6 +72,8 @@ def generate(height, width, start=None, step=None, symmetrical=True):
         _remove_all_numbers(puzzle, positions)
         _place_blocks(puzzle, positions, step, symmetrical)
         _place_numbers(puzzle, positions)
+        display(puzzle)
+        print()
 
     _remove_some_numbers(puzzle, positions)
     return puzzle, z3solve(puzzle)
