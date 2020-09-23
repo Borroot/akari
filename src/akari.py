@@ -2,13 +2,13 @@ from z3 import *
 
 from printer import display
 from loader import *
-from generator import generate
+from generator import generate, XAXIS, YAXIS, XYAXIS
 from z3solver import z3solve, z3solves, z3unique
 
 
 def main():
     for _ in range(10):
-        puzzle, solution = generate(10, 10, 5, 1)
+        puzzle, solution = generate(15, 25, 20, 1, YAXIS)
         display(puzzle)
         print()
 

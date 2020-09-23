@@ -6,6 +6,11 @@ from printer import display
 from z3solver import z3solve, z3unique, z3solves
 
 
+XAXIS = 0
+YAXIS = 1
+XYAXIS = 2
+
+
 def _initialize(puzzle):
     """ Generate a list with all the positions on the puzzle. """
     return [(x, y) for y in range(len(puzzle)) for x in range(len(puzzle[0]))]
@@ -17,15 +22,14 @@ def _validposition(puzzle, x, y):
 
 
 def _neighbours(puzzle, x, y):
-    """ Count the number of neighbours for puzzle[y][x], walls are counted as
-    0.5, to prevent a lot of walls on the side of the puzzle. """
+    """ Count the number of wall neighbours for puzzle[y][x]. """
     count = 0
-    for dx in [0, 1, -1]:
-        for dy in [0, 1, -1]:
+    for dx in [0, 1, -1, 2, -2]:
+        for dy in [0, 1, -1, 2, -2]:
             if not _validposition(puzzle, x + dx, y + dy):
-                count += 0.5
+                count += 0.10
             elif puzzle[y + dy][x + dx] != N:
-                count += 1
+                count += 1 if dx == 0 or dy == 0 else 0.5
     return count
 
 
@@ -48,7 +52,7 @@ def _random_location(puzzle, positions, solutions=None):
     distribution inverse to the heuristic. """
     choices = ([(x, y) for (x, y) in positions if puzzle[y][x] == N])
     distro = [_heuristic(puzzle, x, y, solutions) for (x, y) in choices]
-    distro = [max(distro) - x for x in distro]
+    distro = [(max(distro) + 0.1 - x) ** 10 for x in distro]
     distro = [x / sum(distro) if sum(distro) > 0 else 1 / len(distro) for x in distro]
 
     index = random.choice(np.arange(len(choices)), p=distro)
@@ -61,13 +65,16 @@ def _place_block(puzzle, positions, symmetrical, solutions=None):
     x, y = _random_location(puzzle, positions, solutions)
     puzzle[y][x] = B
 
-    if symmetrical:
+    if symmetrical is not None:
         width = len(puzzle[0]) - 1
         height = len(puzzle) - 1
 
-        puzzle[height - y][x] = B
-        puzzle[y][width - x] = B
-        puzzle[height - y][width - x] = B
+        if symmetrical == XAXIS or symmetrical == XYAXIS:
+            puzzle[height - y][x] = B
+        if symmetrical == YAXIS or symmetrical == XYAXIS:
+            puzzle[y][width - x] = B
+        if symmetrical == XYAXIS:
+            puzzle[height - y][width - x] = B
 
 
 def _place_blocks(puzzle, positions, number, symmetrical, solutions=None):
@@ -108,7 +115,7 @@ def _place_numbers(puzzle, positions):
     # print()
 
 
-def generate(height, width, start=None, step=None, symmetrical=True):
+def generate(height, width, start=None, step=None, symmetrical=None):
     puzzle = [[N for _ in range(width)] for _ in range(height)]
     positions = _initialize(puzzle)
 
