@@ -2,19 +2,28 @@ from z3 import *
 
 from printer import display
 from loader import *
+from generator import generate
 from z3solver import z3solve, z3solves, z3unique
 
 
 def main():
-    # for index in range(999):
-        # puzzle = loadpuzzle('misc/web/14x14_hard', index, 14, 14)
-        # solution, time = z3solves(puzzle, True)
-        # print(index, time)
+    puzzle, solution = generate(20, 40, 50, 3)
+    display(puzzle)
+    print()
+    display(puzzle, solution)
 
-    for i in range(1, 10):
-        puzzle = loadhans('misc/hans/r' + str(i) + 's')
-        solution, time = z3solve(puzzle, True)
-        print(f'r{i}s', time)
+    # total = 0
+    # for index in range(25):
+        # puzzle = loadpuzzle('misc/web/25x25_hard', index, 25, 25)
+        # solution, time = z3solve(puzzle, True)
+        # print(index, time)
+        # total += time
+    # print('average', total / 25)
+
+    # for i in range(1, 10):
+        # puzzle = loadhans('misc/hans/r' + str(i) + 's')
+        # solution, time = z3solve(puzzle, True)
+        # print(f'r{i}s', time)
 
 
 if __name__ == '__main__':

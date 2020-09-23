@@ -35,7 +35,7 @@ def _loadcodex(filename, index):
 
 
 def _convert(codex, height, width):
-    puzzle = [list(range(width)) for _ in range(height)]
+    puzzle = [[N for _ in range(width)] for _ in range(height)]
 
     count = 0
     for c in codex:

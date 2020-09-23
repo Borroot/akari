@@ -31,33 +31,47 @@ def _constraints_walls(puzzle, solver, bvars, positions):
         _constraints_wall(puzzle, solver, bvars, x, y)
 
 
-def _constraints_lines(puzzle, solver, bvars, positions):
-    """ This function adds two types of constraints. It adds a constraint such
-    that every cell is lit up _at least_ once. This is done by adding a
-    constraint for every cell looking in all directions and demanding a light
-    bulb in at least one of the directions (or at the place itself). It also
-    adds a constraint such that no two light bulbs illuminate each other. This
-    is done by making sure that for every straight line (horizontal or vertical)
-    on the board (interrupted by walls) there is never more than one light
-    bulb on that line. """
+def _constraints_lines_atleastone(puzzle, solver, bvars, positions):
+    """ Add a constraint such that every cell is lit up. This is done by adding
+    a constraint for every cell looking in all directions and demanding a light
+    bulb in at least one of the directions (or at the place itself). """
     for x, y in [(x, y) for (x, y) in positions if puzzle[y][x] == N]:
-        atleastone = [(bvars[x, y], 1)]  # make sure every cell is lit up
+        atleastone = [bvars[x, y]]  # make sure every cell is lit up
 
         for dx, dy in DIRECTIONS:
-            atmostone = [(bvars[x, y], 1)]  # make sure no light bulbs cross
-
             newx, newy = x + dx, y + dy
             while _validposition(puzzle, newx, newy) and puzzle[newy][newx] == N:
-                atleastone.append((bvars[newx, newy], 1))
+                atleastone.append(bvars[newx, newy])
+                newx, newy = newx + dx, newy + dy
+
+        solver.add(Or(atleastone))
+
+
+def _constraints_lines_atmostone(puzzle, solver, bvars, positions):
+    """ Add a constraint such that no two light bulbs illuminate each other.
+    This is done by making sure that for every straight line (horizontal or
+    vertical) on the board (interrupted by walls) there is never more than one
+    light bulb on that line. """
+    for dx, dy in DIRECTIONS[:2]:
+        used = []
+
+        for x, y in [(x, y) for (x, y) in positions if puzzle[y][x] == N]:
+            if (x, y) in used:
+                continue
+
+            atmostone = [(bvars[x, y], 1)]  # make sure no light bulbs cross
+            newx, newy = x + dx, y + dy
+
+            while _validposition(puzzle, newx, newy) and puzzle[newy][newx] == N:
                 atmostone.append((bvars[newx, newy], 1))
+                used.append((newx, newy))
                 newx, newy = newx + dx, newy + dy
 
             if len(atmostone) > 1:
                 solver.add(PbLe(atmostone, 1))
 
-        solver.add(PbGe(atleastone, 1))
-
 
 def constraints_all(puzzle, solver, positions, bvars):
     _constraints_walls(puzzle, solver, bvars, positions)
-    _constraints_lines(puzzle, solver, bvars, positions)
+    _constraints_lines_atleastone(puzzle, solver, bvars, positions)
+    _constraints_lines_atmostone(puzzle, solver, bvars, positions)
