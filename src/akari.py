@@ -7,10 +7,11 @@ from z3solver import z3solve, z3solves, z3unique
 
 
 def main():
-    for _ in range(10):
-        puzzle, solution = generate(15, 25, 20, 1, YAXIS)
+    for index in range(100):
+        puzzle, solution = generate(30, 30, 100, 2, YAXIS)
         display(puzzle)
-        print()
+        print(index, '\n')
+        writecodex('misc/generated/30x30', puzzle)
 
     # total = 0
     # for index in range(25):

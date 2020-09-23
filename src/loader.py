@@ -2,8 +2,8 @@ from constant import *
 
 
 def loadpuzzle(filename, index, height, width):
-    codex = _loadcodex(filename, index)
-    return _convert(codex, height, width)
+    codex = _loadline(filename, index)
+    return _codextopuzzle(codex, height, width)
 
 
 def loadhans(filename):
@@ -27,14 +27,23 @@ def loadhans(filename):
         return puzzle
 
 
-def _loadcodex(filename, index):
+def writecodex(filename, puzzle):
+    with open(filename, 'a') as fp:
+        fp.write(_puzzletocodex(puzzle) + '\n')
+
+
+def writehans(filename, puzzle):
+    pass
+
+
+def _loadline(filename, index):
     with open(filename) as fp:
         for i, line in enumerate(fp):
             if i == index:
-                return line
+                return line.rstrip()
 
 
-def _convert(codex, height, width):
+def _codextopuzzle(codex, height, width):
     puzzle = [[N for _ in range(width)] for _ in range(height)]
 
     count = 0
@@ -52,3 +61,34 @@ def _convert(codex, height, width):
                 c = chr(ord(c) - 1)
 
     return puzzle
+
+
+def _puzzletocodex(puzzle):
+    builder = ''
+    count = -1
+    for row in puzzle:
+        for cell in row:
+            if cell == N:
+                if count == 25:
+                    builder += chr(ord('a') + count)
+                    count = 0
+                else:
+                    count += 1
+            else:
+                if count >= 0:
+                    builder += chr(ord('a') + count)
+                    count = -1
+
+                if cell == B:
+                    builder += 'B'
+                else:
+                    builder += str(cell)
+
+    if count >= 0:
+        builder += chr(ord('a') + count)
+
+    return builder
+
+
+def _puzzletohans(puzzle):
+    pass
