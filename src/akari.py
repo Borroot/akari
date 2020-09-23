@@ -7,10 +7,10 @@ from z3solver import z3solve, z3solves, z3unique
 
 
 def main():
-    puzzle, solution = generate(10, 20, 10, 3)
-    display(puzzle)
-    print()
-    display(puzzle, solution)
+    for _ in range(10):
+        puzzle, solution = generate(10, 10, 5, 1)
+        display(puzzle)
+        print()
 
     # total = 0
     # for index in range(25):

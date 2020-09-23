@@ -36,13 +36,13 @@ def z3solve(puzzle, timed=False):
         return solution
 
 
-def z3solves(puzzle, timed=False):
+def z3solves(puzzle, number=None, timed=False):
     positions, bvars, solver = _initialize(puzzle)
 
     if timed: start = time.time()
 
     solutions = []
-    while solver.check() == sat:
+    while (number is None or len(solutions) < number) and solver.check() == sat:
         solution = _solution(positions, bvars, solver.model())
         solutions.append(solution)
         constraints = Not(And([bvars[x, y] for (x, y) in solution]))
