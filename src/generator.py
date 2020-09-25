@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import random
 
-from constant import *
+from constants import *
 from printer import display
 from z3solver import z3solve, z3unique, z3solves
 

@@ -1,6 +1,6 @@
 from z3 import *
 
-from constant import *
+from constants import *
 
 
 def _validposition(puzzle, x, y):
