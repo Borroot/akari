@@ -14,11 +14,11 @@ def main():
         # print(index, '\n')
         # writecodex('misc/generated/40x40', puzzle)
 
-    puzzle = loadpuzzle('misc/web/7x7_easy', 0, 7, 7)
-    solution = tracksolve(puzzle, True)
-    display(puzzle)
-    print()
-    display(puzzle, solution)
+    puzzle = loadpuzzle('misc/generated/40x40', 0, 40, 40)
+    solution, perc = tracksolve(puzzle, True)
+    # display(puzzle)
+    # print()
+    # display(puzzle, solution)
 
     # total = 0
     # for index in range(76):

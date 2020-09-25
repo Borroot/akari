@@ -46,13 +46,8 @@ def _place_bulb(puzzle, x, y, shadows, candidates):
             newx, newy = newx + dx, newy + dy
 
 
-def _neighbours(puzzle, x, y, candidates):
-    neighbours = []
-    for dx, dy in DIRECTIONS:
-        newx, newy = x + dx, y + dy
-        if _validposition(puzzle, newx, newy) and (newx, newy) in candidates:
-            neighbours.append((newx, newy))
-    return neighbours
+def _neighbours(puzzle, x, y):
+    return [(x+dx, y+dy) for dx, dy in DIRECTIONS if _validposition(puzzle, x+dx, y+dy)]
 
 
 def _trivialsolve(puzzle, positions, shadows, candidates):
@@ -66,8 +61,9 @@ def _trivialsolve(puzzle, positions, shadows, candidates):
         done = True
 
         for x, y in walls:
-            number = puzzle[y][x]
-            neighbours = _neighbours(puzzle, x, y, candidates)
+            neighbours = _neighbours(puzzle, x, y)
+            number = puzzle[y][x] - len([n for n in neighbours if n in solution])
+            neighbours = [n for n in neighbours if n in candidates]
 
             if len(neighbours) < number:  # no possible solution
                 return None
@@ -79,7 +75,6 @@ def _trivialsolve(puzzle, positions, shadows, candidates):
                     _place_bulb(puzzle, _x, _y, shadows, candidates)
                     solution.append((_x, _y))
 
-    print(shadows, candidates)
     return solution
 
 
