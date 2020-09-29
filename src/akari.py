@@ -2,12 +2,16 @@ from z3 import *
 
 from printer import display
 from loader import *
+from drawer import draw
 from generator import generate, XAXIS, YAXIS, XYAXIS
 from z3solver import z3solve, z3solves, z3unique
 from tracksolver import tracksolve, tracksolves, trackunique
 
 
 def main():
+    puzzle = loadpuzzle('misc/web/7x7_easy', 0, 7, 7)
+    draw(puzzle, 'test')
+
     # for index in range(100):
         # puzzle, solution = generate(40, 40, 170, 3, YAXIS)
         # display(puzzle)
@@ -28,10 +32,9 @@ def main():
         # total += time
     # print('average', total / 76)
 
-    for i in range(1, 10):
-        puzzle = loadhans('misc/hans/r' + str(i) + 's')
-        solution, time = z3solve(puzzle, True)
-        display(puzzle, solution)
+    # for i in range(1, 10):
+        # puzzle = loadhans('misc/hans/r' + str(i) + 's')
+        # solution, time = z3solve(puzzle, True)
         # print(f'r{i}s', time)
 
 

@@ -66,8 +66,7 @@ def _place_block(puzzle, positions, symmetrical, solutions=None):
     puzzle[y][x] = B
 
     if symmetrical is not None:
-        width = len(puzzle[0]) - 1
-        height = len(puzzle) - 1
+        width, height = len(puzzle[0]) - 1, len(puzzle) - 1
 
         if symmetrical == XAXIS or symmetrical == XYAXIS:
             puzzle[height - y][x] = B
