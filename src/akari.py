@@ -14,8 +14,8 @@ def main():
         # print(index, '\n')
         # writecodex('misc/generated/40x40', puzzle)
 
-    puzzle = loadpuzzle('misc/generated/40x40', 0, 40, 40)
-    solution, perc = tracksolve(puzzle, True)
+    # puzzle = loadpuzzle('misc/generated/40x40', 0, 40, 40)
+    # solution = tracksolve(puzzle, True)
     # display(puzzle)
     # print()
     # display(puzzle, solution)
@@ -28,9 +28,10 @@ def main():
         # total += time
     # print('average', total / 76)
 
-    # for i in range(1, 10):
-        # puzzle = loadhans('misc/hans/r' + str(i) + 's')
-        # solution, time = z3solve(puzzle, True)
+    for i in range(1, 10):
+        puzzle = loadhans('misc/hans/r' + str(i) + 's')
+        solution, time = z3solve(puzzle, True)
+        display(puzzle, solution)
         # print(f'r{i}s', time)
 
 

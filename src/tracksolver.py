@@ -8,16 +8,17 @@ def _validposition(puzzle, x, y):
 
 
 def _initialize(puzzle):
+    """ Initialize some lists. The shadows and candidates list start with all
+    the empty cells. The shadows list indicates which cell is not lighted up.
+    The candidates list indicates at which positions a bulb could be placed.  """
     positions = [(x, y) for y in range(len(puzzle)) for x in range(len(puzzle[0]))]
-
-    # shadow: not lit up empty cells; candidate: cells which could have a bulb
     shadows = {(x, y) for (x, y) in positions if puzzle[y][x] == N}
     candidates = {(x, y) for (x, y) in positions if puzzle[y][x] == N}
-
     return positions, shadows, candidates
 
 
 def _remove_list(x, y, collection):
+    """ Remove the given cell from the given list, if possible. """
     try:
         collection.remove((x, y))
     except KeyError:
@@ -30,6 +31,7 @@ def _remove_cell(x, y, shadows, candidates):
 
 
 def _remove_zeros(puzzle, positions, shadows, candidates):
+    """ Remove cells next to a zero constraint from the candidates list. """
     for x, y in [(x, y) for (x, y) in positions if puzzle[y][x] == 0]:
         for dx, dy in DIRECTIONS:
             if _validposition(puzzle, x + dx, y + dy):
@@ -37,6 +39,8 @@ def _remove_zeros(puzzle, positions, shadows, candidates):
 
 
 def _place_bulb(puzzle, x, y, shadows, candidates):
+    """ Place a light bulb on the puzzle at the given coordinates by updating
+    the shadows and candidates list accordingly. """
     _remove_cell(x, y, shadows, candidates)
 
     for dx, dy in DIRECTIONS:
@@ -47,10 +51,15 @@ def _place_bulb(puzzle, x, y, shadows, candidates):
 
 
 def _neighbours(puzzle, x, y):
+    """ Generate a list with all the coordinates of the neighbours for the
+    given cell. """
     return [(x+dx, y+dy) for dx, dy in DIRECTIONS if _validposition(puzzle, x+dx, y+dy)]
 
 
 def _trivialsolve(puzzle, positions, shadows, candidates):
+    """ Place all the light bulbs which can be placed for sure. This can be
+    done if there are exactly 'n' candidates neighbour of a 'n' constrained
+    wall. Repeat this process until it does not work anymore. """
     _remove_zeros(puzzle, positions, shadows, candidates)
     solution = []
 
@@ -68,7 +77,7 @@ def _trivialsolve(puzzle, positions, shadows, candidates):
             if len(neighbours) < number:  # no possible solution
                 return None
 
-            if len(neighbours) == number:
+            if len(neighbours) == number:  # place light bulbs
                 done = False
                 walls.remove((x, y))
                 for _x, _y in neighbours:
