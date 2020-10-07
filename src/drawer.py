@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 from constants import *
 
 
-_MAGNIFIER = 800
+_MAGNIFIER = 500
 _LINEWIDTH = _MAGNIFIER // 20
 
 
@@ -36,11 +36,15 @@ def _draw_walls(draw, width, height, puzzle):
                 _draw_rectangle(draw, x, y, 'black', text, 'white')
 
 
-def draw(puzzle, filename):
+def draw(puzzle, filename, magnifier=None):
+    if magnifier is not None:
+        global _MAGNIFIER
+        _MAGNIFIER = magnifier
+
     width, height = len(puzzle[0]), len(puzzle)
 
     size = (width * _MAGNIFIER + _LINEWIDTH, height * _MAGNIFIER + _LINEWIDTH)
-    im = Image.new("RGBA", size, (255, 255, 255, 0))
+    im = Image.new("RGB", size)
     draw = ImageDraw.Draw(im)
 
     _draw_background(draw)

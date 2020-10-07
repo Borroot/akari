@@ -9,8 +9,8 @@ from tracksolver import tracksolve, tracksolves, trackunique
 
 
 def main():
-    puzzle = loadpuzzle('misc/web/7x7_easy', 0, 7, 7)
-    draw(puzzle, 'test')
+    puzzle = loadpuzzle('misc/generated/40x40', 0, 40, 40)
+    draw(puzzle, 'test', 400)
 
     # for index in range(100):
         # puzzle, solution = generate(40, 40, 170, 3, YAXIS)
