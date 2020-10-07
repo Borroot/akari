@@ -1,22 +1,39 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
+
+from constants import *
 
 
-_MAGNIFIER = 100
-_LINEWIDTH = 8
-_LINEHALF = _LINEWIDTH // 2
+_MAGNIFIER = 800
+_LINEWIDTH = _MAGNIFIER // 20
 
 
 def _draw_background(draw):
-    draw.rectangle((0, 0) + draw.im.size, fill=(0, 0, 0))
+    draw.rectangle((0, 0) + draw.im.size, fill='black')
+
+
+def _draw_rectangle(draw, x, y, rectcolor, text=None, textcolor=None):
+    top = (x * _MAGNIFIER + _LINEWIDTH, y * _MAGNIFIER + _LINEWIDTH)
+    size = ((x + 1) * _MAGNIFIER, (y + 1) * _MAGNIFIER)
+    draw.rectangle(top + size, fill=rectcolor)
+
+    if text is not None:
+        middle = ((top[0] + size[0]) // 2 - _MAGNIFIER // 5, top[1])
+        font = ImageFont.truetype('res/font/verdana.ttf', int(_MAGNIFIER * 0.7))
+        draw.text(middle, text, font=font, fill=textcolor, align='center')
 
 
 def _draw_cells(draw, width, height):
     for x in range(width):
         for y in range(height):
-            offset = (_LINEWIDTH // 2, _LINEWIDTH // 2)
-            top = (x * _MAGNIFIER + _LINEWIDTH + offset[0], y * _MAGNIFIER + _LINEWIDTH + offset[1])
-            size = ((x+1) * _MAGNIFIER - _LINEWIDTH + offset[0], (y+1) * _MAGNIFIER - _LINEWIDTH + offset[1])
-            draw.rectangle(top + size, fill=(255, 255, 255))
+            _draw_rectangle(draw, x, y, 'white')
+
+
+def _draw_walls(draw, width, height, puzzle):
+    for x in range(width):
+        for y in range(height):
+            if puzzle[y][x] != N:
+                text = None if puzzle[y][x] == B else str(puzzle[y][x])
+                _draw_rectangle(draw, x, y, 'black', text, 'white')
 
 
 def draw(puzzle, filename):
@@ -28,5 +45,6 @@ def draw(puzzle, filename):
 
     _draw_background(draw)
     _draw_cells(draw, width, height)
+    _draw_walls(draw, width, height, puzzle)
 
     im.save(filename + ".png", "PNG")
