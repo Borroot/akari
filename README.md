@@ -1,14 +1,17 @@
 # Akari
 Akari (Light Up) is a logic puzzle with simple rules and challenging solutions.
 
-## Rules
+# Rules
 The rules are simple. Akari is played on a rectangular grid. The grid has both black cells and white cells in it. The objective is to place light bulbs on the grid so that every white square is lit. A cell is illuminated by a light bulb if they're in the same row or column, and if there are no black cells between them. Also, no light bulb may illuminate another light bulb. Some of the black cells have numbers in them. A number in a black cell indicates how many light bulbs share an edge with that cell.
 
-## Solvers
-(Explain the z3 solver.)
+# Solvers
 
-## Generation
-(Translate)
+## Z3
+
+## Backtracking
+
+# Generation
+(Translate and explain the heuristic of choosing cells.)
 
 1. Pak een leeg grid (evt met een aantal random blokjes).
 2. Plaats een blokje random op het grid.
