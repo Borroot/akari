@@ -1,4 +1,5 @@
 from z3 import *
+import time
 
 from printer import display
 from loader import *
@@ -9,8 +10,9 @@ from tracksolver import tracksolve, tracksolves, trackunique
 
 
 def main():
-    puzzle = loadpuzzle('misc/generated/40x40', 0, 40, 40)
-    draw(puzzle, 'test', 400)
+    puzzle = loadpuzzle('misc/web/14x14_easy', 0, 14, 14)
+    solution = z3solve(puzzle)
+    draw(puzzle, 'test', 500, solution)
 
     # for index in range(100):
         # puzzle, solution = generate(40, 40, 170, 3, YAXIS)
