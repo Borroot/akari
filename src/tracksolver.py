@@ -4,19 +4,19 @@ from constants import *
 from printer import display
 
 
-def _validposition(puzzle, x, y):
-    """ Check if the given x and y indices are on the puzzle. """
-    return 0 <= y < len(puzzle) and 0 <= x < len(puzzle[0])
-
-
 def _initialize(puzzle):
     """ Initialize some lists. The shadows and candidates list start with all
-    the empty cells. The shadows list indicates which cell is not lighted up.
-    The candidates list indicates at which positions a bulb could be placed.  """
-    positions = [(x, y) for y in range(len(puzzle)) for x in range(len(puzzle[0]))]
-    shadows = {(x, y) for (x, y) in positions if puzzle[y][x] == N}
-    candidates = {(x, y) for (x, y) in positions if puzzle[y][x] == N}
-    return positions, shadows, candidates
+    the empty cells. The shadows list indicates which cell is not lit up. The
+    candidates list indicates at which poss a light could be placed. """
+    poss = [(x, y) for y in range(len(puzzle)) for x in range(len(puzzle[0]))]
+    shadows = {(x, y) for (x, y) in poss if puzzle[y][x] == N}
+    candidates = {(x, y) for (x, y) in poss if puzzle[y][x] == N}
+    return poss, shadows, candidates
+
+
+def _validpos(puzzle, x, y):
+    """ Check if the given x and y indices are on the puzzle. """
+    return 0 <= y < len(puzzle) and 0 <= x < len(puzzle[0])
 
 
 def _remove_list(x, y, collection):
@@ -32,11 +32,11 @@ def _remove_cell(x, y, shadows, candidates):
     _remove_list(x, y, candidates)
 
 
-def _remove_zeros(puzzle, positions, shadows, candidates):
+def _remove_zeros(puzzle, poss, shadows, candidates):
     """ Remove cells next to a zero constraint from the candidates list. """
-    for x, y in [(x, y) for (x, y) in positions if puzzle[y][x] == 0]:
+    for x, y in [(x, y) for (x, y) in poss if puzzle[y][x] == 0]:
         for dx, dy in DIRECTIONS:
-            if _validposition(puzzle, x + dx, y + dy):
+            if _validpos(puzzle, x + dx, y + dy):
                 _remove_list(x + dx, y + dy, candidates)
 
 
@@ -47,7 +47,7 @@ def _place_bulb(puzzle, x, y, shadows, candidates):
 
     for dx, dy in DIRECTIONS:
         newx, newy = x + dx, y + dy
-        while _validposition(puzzle, newx, newy) and puzzle[newy][newx] == N:
+        while _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
             _remove_cell(newx, newy, shadows, candidates)
             newx, newy = newx + dx, newy + dy
 
@@ -55,17 +55,17 @@ def _place_bulb(puzzle, x, y, shadows, candidates):
 def _neighbours(puzzle, x, y):
     """ Generate a list with all the coordinates of the neighbours for the
     given cell. """
-    return [(x+dx, y+dy) for dx, dy in DIRECTIONS if _validposition(puzzle, x+dx, y+dy)]
+    return [(x+dx, y+dy) for dx, dy in DIRECTIONS if _validpos(puzzle, x+dx, y+dy)]
 
 
-def _trivialsolve(puzzle, positions, shadows, candidates):
+def _trivialsolve(puzzle, poss, shadows, candidates):
     """ Place all the light bulbs which can be placed for sure. This can be
     done if there are exactly 'n' candidates neighbour of a 'n' constrained
     wall. Repeat this process until it does not work anymore. """
-    _remove_zeros(puzzle, positions, shadows, candidates)
+    _remove_zeros(puzzle, poss, shadows, candidates)
     solution = []
 
-    walls = [(x, y) for (x, y) in positions if puzzle[y][x] != N and puzzle[y][x] != B]
+    walls = [(x, y) for (x, y) in poss if puzzle[y][x] != N and puzzle[y][x] != B]
     done = False
 
     while not done:
@@ -114,12 +114,12 @@ def tracksolve(puzzle):
 
 
 def tracksolves(puzzle, number=None):
-    positions, shadows, candidates = _initialize(puzzle)
+    poss, shadows, candidates = _initialize(puzzle)
 
     whole = len(candidates)
     start = time.time()
 
-    solution = _trivialsolve(puzzle, positions, shadows, candidates)
+    solution = _trivialsolve(puzzle, poss, shadows, candidates)
     part = len(candidates)
 
     solutions = []

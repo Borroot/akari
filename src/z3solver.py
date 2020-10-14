@@ -4,20 +4,15 @@ import time
 from constraints import constraints_all
 
 
-def _solution(positions, bvars, model):
-    """ Convert the model given by z3 to a list with light bulb positions. """
-    return [(x, y) for (x, y) in positions if model[bvars[x, y]]]
-
-
 def _initialize(puzzle):
     """ Initialize the solver with all the constraints. """
-    positions = [(x, y) for y in range(len(puzzle)) for x in range(len(puzzle[0]))]
-    bvars = {(x, y): Bool("v{};{}".format(x, y)) for x, y in positions}
+    poss = [(x, y) for y in range(len(puzzle)) for x in range(len(puzzle[0]))]
+    bvars = {(x, y): Bool("v{};{}".format(x, y)) for x, y in poss}
 
     solver = Solver()
-    constraints_all(puzzle, solver, positions, bvars)
+    constraints_all(puzzle, solver, poss, bvars)
 
-    return positions, bvars, solver
+    return poss, bvars, solver
 
 
 def z3unique(puzzle):
@@ -35,14 +30,14 @@ def z3solve(puzzle):
 def z3solves(puzzle, number=None):
     """ Search for the given number of solutions for the given puzzle using z3,
     if no number is given then all solutions will be returned. """
-    positions, bvars, solver = _initialize(puzzle)
+    poss, bvars, solver = _initialize(puzzle)
 
     start = time.time()
 
     # FIXME Behave deterministically.
     solutions = []
     while (number is None or len(solutions) < number) and solver.check() == sat:
-        solution = _solution(positions, bvars, solver.model())
+        solution = [(x, y) for (x, y) in poss if solver.model()[bvars[x, y]]]
         solutions.append(solution)
         solver.add(Not(And([bvars[x, y] for (x, y) in solution])))
 

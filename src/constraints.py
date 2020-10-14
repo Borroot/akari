@@ -3,7 +3,7 @@ from z3 import *
 from constants import *
 
 
-def _validposition(puzzle, x, y):
+def _validpos(puzzle, x, y):
     """ Check if the given x and y indices are on the puzzle. """
     return 0 <= y < len(puzzle) and 0 <= x < len(puzzle[0])
 
@@ -15,37 +15,37 @@ def _constraints_wall(puzzle, solver, bvars, x, y):
     neighbours = []
     for dx, dy in DIRECTIONS:
         newx, newy = x + dx, y + dy
-        if _validposition(puzzle, newx, newy) and puzzle[newy][newx] == N:
+        if _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
             neighbours.append((bvars[newx, newy], 1))
 
     solver.add(PbEq(neighbours, puzzle[y][x]))
 
 
-def _constraints_walls(puzzle, solver, bvars, positions):
+def _constraints_walls(puzzle, solver, bvars, poss):
     """ Loop over all the walls with a number constraint and add the
     constraints. """
-    walls = [(x, y) for (x, y) in positions if 0 <= puzzle[y][x] <= 4]
+    walls = [(x, y) for (x, y) in poss if 0 <= puzzle[y][x] <= 4]
     for x, y in walls:
         _constraints_wall(puzzle, solver, bvars, x, y)
 
 
-def _constraints_lines_atleastone(puzzle, solver, bvars, positions):
+def _constraints_lines_atleastone(puzzle, solver, bvars, poss):
     """ Add a constraint such that every cell is lit up. This is done by adding
     a constraint for every cell looking in all directions and demanding a light
     bulb in at least one of the directions (or at the place itself). """
-    for x, y in [(x, y) for (x, y) in positions if puzzle[y][x] == N]:
+    for x, y in [(x, y) for (x, y) in poss if puzzle[y][x] == N]:
         atleastone = [bvars[x, y]]  # make sure every cell is lit up
 
         for dx, dy in DIRECTIONS:
             newx, newy = x + dx, y + dy
-            while _validposition(puzzle, newx, newy) and puzzle[newy][newx] == N:
+            while _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
                 atleastone.append(bvars[newx, newy])
                 newx, newy = newx + dx, newy + dy
 
         solver.add(Or(atleastone))
 
 
-def _constraints_lines_atmostone(puzzle, solver, bvars, positions):
+def _constraints_lines_atmostone(puzzle, solver, bvars, poss):
     """ Add a constraint such that no two light bulbs illuminate each other.
     This is done by making sure that for every straight line (horizontal or
     vertical) on the board (interrupted by walls) there is never more than one
@@ -53,14 +53,14 @@ def _constraints_lines_atmostone(puzzle, solver, bvars, positions):
     for dx, dy in DIRECTIONS[:2]:
         used = []
 
-        for x, y in [(x, y) for (x, y) in positions if puzzle[y][x] == N]:
+        for x, y in [(x, y) for (x, y) in poss if puzzle[y][x] == N]:
             if (x, y) in used:
                 continue
 
             atmostone = [(bvars[x, y], 1)]  # make sure no light bulbs cross
             newx, newy = x + dx, y + dy
 
-            while _validposition(puzzle, newx, newy) and puzzle[newy][newx] == N:
+            while _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
                 atmostone.append((bvars[newx, newy], 1))
                 used.append((newx, newy))
                 newx, newy = newx + dx, newy + dy
@@ -69,7 +69,7 @@ def _constraints_lines_atmostone(puzzle, solver, bvars, positions):
                 solver.add(PbLe(atmostone, 1))
 
 
-def constraints_all(puzzle, solver, positions, bvars):
-    _constraints_walls(puzzle, solver, bvars, positions)
-    _constraints_lines_atleastone(puzzle, solver, bvars, positions)
-    _constraints_lines_atmostone(puzzle, solver, bvars, positions)
+def constraints_all(puzzle, solver, poss, bvars):
+    _constraints_walls(puzzle, solver, bvars, poss)
+    _constraints_lines_atleastone(puzzle, solver, bvars, poss)
+    _constraints_lines_atmostone(puzzle, solver, bvars, poss)
