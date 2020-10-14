@@ -12,15 +12,13 @@ def _constraints_wall(puzzle, solver, bvars, x, y):
     """ The given x and y values represent a wall on the board with a number,
     n, constraint. From the neighbours of this wall exactly n neighbours need
     to be true, this function adds this constraint. """
-    number = puzzle[y][x]
-
     neighbours = []
     for dx, dy in DIRECTIONS:
         newx, newy = x + dx, y + dy
         if _validposition(puzzle, newx, newy) and puzzle[newy][newx] == N:
             neighbours.append((bvars[newx, newy], 1))
 
-    solver.add(PbEq(neighbours, number))
+    solver.add(PbEq(neighbours, puzzle[y][x]))
 
 
 def _constraints_walls(puzzle, solver, bvars, positions):

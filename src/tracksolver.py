@@ -1,3 +1,5 @@
+import time
+
 from constants import *
 from printer import display
 
@@ -87,23 +89,40 @@ def _trivialsolve(puzzle, positions, shadows, candidates):
     return solution
 
 
-def _backtracksolve(puzzle, shadows, candidates, solution):
+def _backtracksolve(puzzle, shadows, candidates, solution, solutions, number):
     pass
 
 
-def tracksolve(puzzle, timed=False):
+def trackunique(puzzle, stats=False):
+    if stats:
+        solutions, time, perc = tracksolves(puzzle, 2, stats)
+        return len(solutions) == 2, time, perc
+    else:
+        return len(tracksolves(puzzle, 2, stats)) == 2
+
+
+def tracksolve(puzzle, stats=False):
+    if stats:
+        solutions, time, perc = tracksolves(puzzle, 1, stats)
+        return solutions[0] if len(solutions) == 1 else None, time, perc
+    else:
+        solutions = tracksolves(puzzle, 1, stats)
+        return solutions[0] if len(solutions) == 1 else None
+
+
+def tracksolves(puzzle, number=None, stats=False):
     positions, shadows, candidates = _initialize(puzzle)
 
+    whole = len(candidates)
+    start = time.time()
+
     solution = _trivialsolve(puzzle, positions, shadows, candidates)
+    part = len(candidates)
+
+    solutions = []
     if solution is not None:
-        _backtracksolve(puzzle, shadows, candidates, solution)
+        _backtracksolve(puzzle, shadows, candidates, solution, solutions, number)
 
-    return solution
+    end = time.time()
 
-
-def tracksolves(puzzle, number=None, timed=False):
-    pass
-
-
-def trackunique(puzzle, timed=False):
-    pass
+    return solutions, end - start, (whole, part) if stats else solutions

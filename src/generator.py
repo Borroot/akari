@@ -114,15 +114,17 @@ def _place_numbers(puzzle, positions):
     print()
 
 
-def generate(height, width, start=None, step=None, symmetrical=None):
+def generate(height, width, start=None, step=None, symmetrical=None, seed=None):
     puzzle = [[N for _ in range(width)] for _ in range(height)]
     positions = _initialize(puzzle)
+    if seed is not None: random.seed(seed)
 
     big = width if width > height else height
     start = big if start is None else min(start, (width * height) // 2)
     step = min(1, big // 3) if step is None else step
 
     _place_blocks(puzzle, positions, start, symmetrical)
+    # FIXME Make sure the puzzle has a solution.
     while len(solutions := z3solves(puzzle, 2)) > 1:
         _remove_all_numbers(puzzle, positions)
         _place_blocks(puzzle, positions, step, symmetrical, solutions)

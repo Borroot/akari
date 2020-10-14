@@ -20,63 +20,51 @@ def _initialize(puzzle):
     return positions, bvars, solver
 
 
-def z3solve(puzzle, timed=False):
+def z3solve(puzzle, stats=False):
     """ Search for one solution for the given puzzle using z3. """
     positions, bvars, solver = _initialize(puzzle)
 
-    if timed: start = time.time()
+    start = time.time()
     result = solver.check()
-    if timed: end = time.time()
+    end = time.time()
 
     if result == sat:
         solution = _solution(positions, bvars, solver.model())
     else:
         solution = None
 
-    if timed:
-        return solution, end - start
-    else:
-        return solution
+    return solution, end - start if stats else solution
 
 
-def z3solves(puzzle, number=None, timed=False):
+def z3solves(puzzle, number=None, stats=False):
     """ Search for the given number of solutions for the given puzzle using z3,
     if no number is given then all solutions will be returned. """
     positions, bvars, solver = _initialize(puzzle)
 
-    if timed: start = time.time()
+    start = time.time()
 
+    # FIXME Behave deterministically.
     solutions = []
     while (number is None or len(solutions) < number) and solver.check() == sat:
         solution = _solution(positions, bvars, solver.model())
         solutions.append(solution)
-        constraints = Not(And([bvars[x, y] for (x, y) in solution]))
-        solver.add(constraints)
+        solver.add(Not(And([bvars[x, y] for (x, y) in solution])))
 
-    if timed: end = time.time()
-
-    if timed:
-        return solutions, end - start
-    else:
-        return solutions
+    end = time.time()
+    return solutions, end - start if stats else solutions
 
 
-def z3unique(puzzle, timed=False):
-    """ Check if the given has exactly one unique solution using z3. """
+def z3unique(puzzle, stats=False):
+    """ Check if the given puzzle has exactly one unique solution using z3. """
     positions, bvars, solver = _initialize(puzzle)
 
-    if timed: start = time.time()
+    start = time.time()
 
     unique = None
     if solver.check() == sat:
         solution = _solution(positions, bvars, solver.model())
-        constraints = Not(And([bvars[x, y] for (x, y) in solution]))
-        solver.add(constraints)
-        unique = solver.check() != sat
+        solver.add(Not(And([bvars[x, y] for (x, y) in solution])))
+        unique = solver.check() == unsat
 
-    if timed: end = time.time()
-
-    if timed:
-        return unique, end - start
-    else:
-        return unique
+    end = time.time()
+    return unique, end - start if stats else unique
