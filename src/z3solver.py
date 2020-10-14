@@ -20,23 +20,19 @@ def _initialize(puzzle):
     return positions, bvars, solver
 
 
-def z3solve(puzzle, stats=False):
+def z3unique(puzzle):
+    """ Check if the given puzzle has exactly one unique solution using z3. """
+    solutions, time = z3solves(puzzle, 2)
+    return len(solutions) == 1 if len(solutions) > 0 else None, time
+
+
+def z3solve(puzzle):
     """ Search for one solution for the given puzzle using z3. """
-    positions, bvars, solver = _initialize(puzzle)
-
-    start = time.time()
-    result = solver.check()
-    end = time.time()
-
-    if result == sat:
-        solution = _solution(positions, bvars, solver.model())
-    else:
-        solution = None
-
-    return solution, end - start if stats else solution
+    solutions, time = z3solves(puzzle, 1, stats)
+    return solutions[0] if len(solutions) == 1 else None, time
 
 
-def z3solves(puzzle, number=None, stats=False):
+def z3solves(puzzle, number=None):
     """ Search for the given number of solutions for the given puzzle using z3,
     if no number is given then all solutions will be returned. """
     positions, bvars, solver = _initialize(puzzle)
@@ -51,20 +47,4 @@ def z3solves(puzzle, number=None, stats=False):
         solver.add(Not(And([bvars[x, y] for (x, y) in solution])))
 
     end = time.time()
-    return solutions, end - start if stats else solutions
-
-
-def z3unique(puzzle, stats=False):
-    """ Check if the given puzzle has exactly one unique solution using z3. """
-    positions, bvars, solver = _initialize(puzzle)
-
-    start = time.time()
-
-    unique = None
-    if solver.check() == sat:
-        solution = _solution(positions, bvars, solver.model())
-        solver.add(Not(And([bvars[x, y] for (x, y) in solution])))
-        unique = solver.check() == unsat
-
-    end = time.time()
-    return unique, end - start if stats else unique
+    return solutions, end - start

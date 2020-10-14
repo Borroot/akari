@@ -90,27 +90,30 @@ def _trivialsolve(puzzle, positions, shadows, candidates):
 
 
 def _backtracksolve(puzzle, shadows, candidates, solution, solutions, number):
-    pass
+    if len(solutions) == number:
+        return
+
+    if len(shadows) == 0:
+        solutions.append(solution.copy())
+        return
+
+    if len(candidates) == 0:
+        return
+
+    # TODO: Finish the recursive case.
 
 
-def trackunique(puzzle, stats=False):
-    if stats:
-        solutions, time, perc = tracksolves(puzzle, 2, stats)
-        return len(solutions) == 2, time, perc
-    else:
-        return len(tracksolves(puzzle, 2, stats)) == 2
+def trackunique(puzzle):
+    solutions, time, diff = tracksolves(puzzle, 2, stats)
+    return len(solutions) == 1 if len(solutions) > 0 else None, time, diff
 
 
-def tracksolve(puzzle, stats=False):
-    if stats:
-        solutions, time, perc = tracksolves(puzzle, 1, stats)
-        return solutions[0] if len(solutions) == 1 else None, time, perc
-    else:
-        solutions = tracksolves(puzzle, 1, stats)
-        return solutions[0] if len(solutions) == 1 else None
+def tracksolve(puzzle):
+    solutions, time, diff = tracksolves(puzzle, 1)
+    return solutions[0] if len(solutions) == 1 else None, time, diff
 
 
-def tracksolves(puzzle, number=None, stats=False):
+def tracksolves(puzzle, number=None):
     positions, shadows, candidates = _initialize(puzzle)
 
     whole = len(candidates)
@@ -124,5 +127,4 @@ def tracksolves(puzzle, number=None, stats=False):
         _backtracksolve(puzzle, shadows, candidates, solution, solutions, number)
 
     end = time.time()
-
-    return solutions, end - start, (whole, part) if stats else solutions
+    return solutions, end - start, (whole, part)
