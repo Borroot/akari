@@ -16,7 +16,7 @@ def _neighbours(puzzle, x, y):
     count = 0
     for dx in [0, 1, -1, 2, -2]:
         for dy in [0, 1, -1, 2, -2]:
-            if not (0 <= y + dy < len(puzzle) and 0 <= x + dx < len(puzzle[0]))
+            if not (0 <= y+dy < len(puzzle) and 0 <= x+dx < len(puzzle[0])):
                 count += 0.10
             elif puzzle[y + dy][x + dx] != N:
                 count += 1 if dx == 0 or dy == 0 else 0.5

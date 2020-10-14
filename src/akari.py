@@ -11,10 +11,6 @@ from tracksolver import tracksolve, tracksolves, trackunique
 
 
 def main():
-    # puzzle = loadpuzzle('misc/web/14x14_easy', 0, 14, 14)
-    # solution = z3solve(puzzle)
-    # draw(puzzle, 'test', 500, solution)
-
     # for index in range(100):
         # puzzle, solution = generate(40, 40, 170, 3, YAXIS)
         # display(puzzle)
@@ -26,26 +22,12 @@ def main():
     # display(puzzle, solution)
     # print(time, whole, part, part / whole)
 
-    # for index in range(40):
-        # puzzle = loadpuzzle('misc/generated/30x30', index, 30, 30)
-        # unique, time = z3unique(puzzle, stats=True)
-        # print(index, time, unique, len(z3solves(puzzle, 2)))
-
-    for index in range(10):
+    for index in range(80):
         puzzle = loadpuzzle('misc/generated/30x30', index, 30, 30)
-        for _ in range(8):
-            solutions = z3solves(puzzle, 2)
-            print(len(solutions), end='\t', flush=True)
-        # print()
-        # display(puzzle, solutions[0])
-        # for solution in solutions[1:]:
-            # print(set(solution) - set(solutions[0]))
-            # display(puzzle, solution)
-
-    # for i in range(1, 10):
-        # puzzle = loadhans('misc/hans/r' + str(i) + 's')
-        # solution, time = z3solve(puzzle, True)
-        # print(f'r{i}s', time)
+        for _ in range(9):
+            solutions, time = z3solves(puzzle, 9)
+            print(len(solutions), end='', flush=True)
+        print()
 
 
 if __name__ == '__main__':

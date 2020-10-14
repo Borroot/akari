@@ -31,10 +31,8 @@ def z3solves(puzzle, number=None):
     """ Search for the given number of solutions for the given puzzle using z3,
     if no number is given then all solutions will be returned. """
     poss, bvars, solver = _initialize(puzzle)
-
     start = time.time()
 
-    # FIXME Behave deterministically.
     solutions = []
     while (number is None or len(solutions) < number) and solver.check() == sat:
         solution = [(x, y) for (x, y) in poss if solver.model()[bvars[x, y]]]
