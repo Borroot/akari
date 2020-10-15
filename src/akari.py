@@ -23,11 +23,11 @@ def main():
             # print(len(solutions), end='\t', flush=True)
         # print()
 
-    # puzzle = [
-        # [B,1,N,1,N,1,B],
-        # [0,N,N,N,N,N,0]]
-    # solution = tracksolve(puzzle)
-    # display(puzzle, solution)
+    puzzle = [
+        [B,1,N,1,N,1,B],
+        [0,N,N,N,N,N,0]]
+    solution = tracksolve(puzzle)
+    display(puzzle, solution)
 
     # for index in range(22, 23):
         # puzzle = loadpuzzle('misc/generated/5x5', index, 5, 5)

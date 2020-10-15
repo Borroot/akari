@@ -1,7 +1,6 @@
 import time
 
 from constants import *
-from printer import display
 
 
 def _initialize(puzzle):
@@ -32,12 +31,16 @@ def _remove_cell(x, y, shadows, candidates):
     _remove_list(x, y, candidates)
 
 
+def _neighbours(puzzle, x, y):
+    """ The coordinates of the neighbours for the given cell. """
+    return [(x+dx, y+dy) for dx, dy in DIRS if _validpos(puzzle, x+dx, y+dy)]
+
+
 def _remove_zeros(puzzle, poss, shadows, candidates):
     """ Remove cells next to a zero constraint from the candidates list. """
     for x, y in [(x, y) for (x, y) in poss if puzzle[y][x] == 0]:
-        for dx, dy in DIRS:
-            if _validpos(puzzle, x + dx, y + dy):
-                _remove_list(x + dx, y + dy, candidates)
+        for _x, _y in _neighbours(puzzle, x, y):
+            _remove_list(_x, _y, candidates)
 
 
 def _place_bulb(puzzle, x, y, shadows, candidates):
@@ -47,19 +50,16 @@ def _place_bulb(puzzle, x, y, shadows, candidates):
 
     for dx, dy in DIRS:
         newx, newy = x + dx, y + dy
-        while _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
-            _remove_cell(newx, newy, shadows, candidates)
-            newx, newy = newx + dx, newy + dy
 
-        # TODO If the light is adjacent to a number constraint cell and that
-        # constraint cell is now satisfied, then we need to remove all adjacent
-        # cells of this constraint cell from the candidates list.
-
-
-def _neighbours(puzzle, x, y):
-    """ Generate a list with all the coordinates of the neighbours for the
-    given cell. """
-    return [(x+dx, y+dy) for dx, dy in DIRS if _validpos(puzzle, x+dx, y+dy)]
+        if _validpos(puzzle, newx, newy) and 0 <= puzzle[newy][newx] <= 4:
+            pass
+            # TODO If the light is adjacent to a number constraint cell and
+            # that constraint cell is now satisfied, then we need to remove all
+            # adjacent cells of this constraint cell from the candidates list.
+        else:
+            while _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
+                _remove_cell(newx, newy, shadows, candidates)
+                newx, newy = newx + dx, newy + dy
 
 
 def _trivialsolve(puzzle, poss, shadows, candidates):
@@ -81,7 +81,6 @@ def _trivialsolve(puzzle, poss, shadows, candidates):
             neighbours = [n for n in neighbours if n in candidates]
 
             if len(neighbours) < number:  # no possible solution
-                print(x, y)
                 return None
 
             if len(neighbours) == number:  # place light bulbs
@@ -108,7 +107,7 @@ def _backtracksolve(puzzle, shadows, candidates, solution, solutions, number, br
 
     # TODO Pop first from candidates list and try with and without a light bulb
     # on that cell. Send a copy of the shadows and candidates list in the call.
-    # TODO Add a counter for the difficulty level.
+    # TODO Add a counter for the difficulty level (branching factor).
 
 
 def trackdifficulty(puzzle):
@@ -144,4 +143,5 @@ def _trackanalyse(puzzle, number=None):
         # TODO Sort the candidates list with number constraint cells first.
         _backtracksolve(puzzle, shadows, candidates, solution, solutions, number, branches)
 
+    solutions.append(solution)  # TODO remove me!
     return solutions, (whole, part, branches)
