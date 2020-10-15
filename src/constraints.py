@@ -13,7 +13,7 @@ def _constraints_wall(puzzle, solver, bvars, x, y):
     n, constraint. From the neighbours of this wall exactly n neighbours need
     to be true, this function adds this constraint. """
     neighbours = []
-    for dx, dy in DIRECTIONS:
+    for dx, dy in DIRS:
         newx, newy = x + dx, y + dy
         if _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
             neighbours.append((bvars[newx, newy], 1))
@@ -36,7 +36,7 @@ def _constraints_lines_atleastone(puzzle, solver, bvars, poss):
     for x, y in [(x, y) for (x, y) in poss if puzzle[y][x] == N]:
         atleastone = [bvars[x, y]]  # make sure every cell is lit up
 
-        for dx, dy in DIRECTIONS:
+        for dx, dy in DIRS:
             newx, newy = x + dx, y + dy
             while _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
                 atleastone.append(bvars[newx, newy])
@@ -50,7 +50,7 @@ def _constraints_lines_atmostone(puzzle, solver, bvars, poss):
     This is done by making sure that for every straight line (horizontal or
     vertical) on the board (interrupted by walls) there is never more than one
     light bulb on that line. """
-    for dx, dy in DIRECTIONS[:2]:
+    for dx, dy in DIRS[:2]:
         used = []
 
         for x, y in [(x, y) for (x, y) in poss if puzzle[y][x] == N]:

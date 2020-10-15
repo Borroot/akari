@@ -94,7 +94,7 @@ def _place_numbers(puzzle, poss):
 
     for x, y in [(x, y) for (x, y) in poss if puzzle[y][x] == B]:
         count = 0
-        for dx, dy in DIRECTIONS:
+        for dx, dy in DIRS:
             if (x + dx, y + dy) in solution:
                 count += 1
         puzzle[y][x] = count

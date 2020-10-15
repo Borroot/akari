@@ -35,7 +35,7 @@ def _remove_cell(x, y, shadows, candidates):
 def _remove_zeros(puzzle, poss, shadows, candidates):
     """ Remove cells next to a zero constraint from the candidates list. """
     for x, y in [(x, y) for (x, y) in poss if puzzle[y][x] == 0]:
-        for dx, dy in DIRECTIONS:
+        for dx, dy in DIRS:
             if _validpos(puzzle, x + dx, y + dy):
                 _remove_list(x + dx, y + dy, candidates)
 
@@ -45,7 +45,7 @@ def _place_bulb(puzzle, x, y, shadows, candidates):
     the shadows and candidates list accordingly. """
     _remove_cell(x, y, shadows, candidates)
 
-    for dx, dy in DIRECTIONS:
+    for dx, dy in DIRS:
         newx, newy = x + dx, y + dy
         while _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
             _remove_cell(newx, newy, shadows, candidates)
@@ -59,7 +59,7 @@ def _place_bulb(puzzle, x, y, shadows, candidates):
 def _neighbours(puzzle, x, y):
     """ Generate a list with all the coordinates of the neighbours for the
     given cell. """
-    return [(x+dx, y+dy) for dx, dy in DIRECTIONS if _validpos(puzzle, x+dx, y+dy)]
+    return [(x+dx, y+dy) for dx, dy in DIRS if _validpos(puzzle, x+dx, y+dy)]
 
 
 def _trivialsolve(puzzle, poss, shadows, candidates):
@@ -94,12 +94,13 @@ def _trivialsolve(puzzle, poss, shadows, candidates):
     return solution
 
 
-def _backtracksolve(puzzle, shadows, candidates, solution, solutions, number):
+def _backtracksolve(puzzle, shadows, candidates, solution, solutions, number, branches):
     if len(solutions) == number:
         return
 
     if len(shadows) == 0:
         solutions.append(solution.copy())
+        branches.append(branches[0])
         return
 
     if len(candidates) == 0:
@@ -107,6 +108,7 @@ def _backtracksolve(puzzle, shadows, candidates, solution, solutions, number):
 
     # TODO Pop first from candidates list and try with and without a light bulb
     # on that cell. Send a copy of the shadows and candidates list in the call.
+    # TODO Add a counter for the difficulty level.
 
 
 def trackdifficulty(puzzle):
@@ -137,8 +139,9 @@ def _trackanalyse(puzzle, number=None):
     part = len(candidates)
 
     solutions = []
+    branches = [0]
     if solution is not None:
         # TODO Sort the candidates list with number constraint cells first.
-        _backtracksolve(puzzle, shadows, candidates, solution, solutions, number)
+        _backtracksolve(puzzle, shadows, candidates, solution, solutions, number, branches)
 
-    return solutions, (whole, part)
+    return solutions, (whole, part, branches)
