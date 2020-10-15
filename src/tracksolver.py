@@ -51,6 +51,10 @@ def _place_bulb(puzzle, x, y, shadows, candidates):
             _remove_cell(newx, newy, shadows, candidates)
             newx, newy = newx + dx, newy + dy
 
+        # TODO If the light is adjacent to a number constraint cell and that
+        # constraint cell is now satisfied, then we need to remove all adjacent
+        # cells of this constraint cell from the candidates list.
+
 
 def _neighbours(puzzle, x, y):
     """ Generate a list with all the coordinates of the neighbours for the
@@ -65,7 +69,7 @@ def _trivialsolve(puzzle, poss, shadows, candidates):
     _remove_zeros(puzzle, poss, shadows, candidates)
     solution = []
 
-    walls = [(x, y) for (x, y) in poss if puzzle[y][x] != N and puzzle[y][x] != B]
+    walls = [(x, y) for x, y in poss if 0 <= puzzle[y][x] <= 4]
     done = False
 
     while not done:
@@ -77,6 +81,7 @@ def _trivialsolve(puzzle, poss, shadows, candidates):
             neighbours = [n for n in neighbours if n in candidates]
 
             if len(neighbours) < number:  # no possible solution
+                print(x, y)
                 return None
 
             if len(neighbours) == number:  # place light bulbs
@@ -100,31 +105,40 @@ def _backtracksolve(puzzle, shadows, candidates, solution, solutions, number):
     if len(candidates) == 0:
         return
 
-    # TODO: Finish the recursive case.
+    # TODO Pop first from candidates list and try with and without a light bulb
+    # on that cell. Send a copy of the shadows and candidates list in the call.
+
+
+def trackdifficulty(puzzle):
+    solutions, difficulty = _trackanalyse(puzzle, number)
+    return difficulty
 
 
 def trackunique(puzzle):
-    solutions, time, diff = tracksolves(puzzle, 2, stats)
-    return len(solutions) == 1 if len(solutions) > 0 else None, time, diff
+    solutions = tracksolves(puzzle, 2, stats)
+    return len(solutions) == 1 if len(solutions) > 0 else None
 
 
 def tracksolve(puzzle):
-    solutions, time, diff = tracksolves(puzzle, 1)
-    return solutions[0] if len(solutions) == 1 else None, time, diff
+    solutions = tracksolves(puzzle, 1)
+    return solutions[0] if len(solutions) == 1 else None
 
 
 def tracksolves(puzzle, number=None):
-    poss, shadows, candidates = _initialize(puzzle)
+    solutions, difficulty = _trackanalyse(puzzle, number)
+    return solutions
 
+
+def _trackanalyse(puzzle, number=None):
+    poss, shadows, candidates = _initialize(puzzle)
     whole = len(candidates)
-    start = time.time()
 
     solution = _trivialsolve(puzzle, poss, shadows, candidates)
     part = len(candidates)
 
     solutions = []
     if solution is not None:
+        # TODO Sort the candidates list with number constraint cells first.
         _backtracksolve(puzzle, shadows, candidates, solution, solutions, number)
 
-    end = time.time()
-    return solutions, end - start, (whole, part)
+    return solutions, (whole, part)

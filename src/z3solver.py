@@ -1,6 +1,8 @@
 from z3 import *
 import time
 
+from printer import display
+from constants import *
 from constraints import constraints_all
 
 
@@ -17,27 +19,29 @@ def _initialize(puzzle):
 
 def z3unique(puzzle):
     """ Check if the given puzzle has exactly one unique solution using z3. """
-    solutions, time = z3solves(puzzle, 2)
-    return len(solutions) == 1 if len(solutions) > 0 else None, time
+    solutions = z3solves(puzzle, 2)
+    return len(solutions) == 1 if len(solutions) > 0 else None
 
 
 def z3solve(puzzle):
     """ Search for one solution for the given puzzle using z3. """
-    solutions, time = z3solves(puzzle, 1, stats)
-    return solutions[0] if len(solutions) == 1 else None, time
+    solutions = z3solves(puzzle, 1)
+    return solutions[0] if len(solutions) == 1 else None
 
 
 def z3solves(puzzle, number=None):
     """ Search for the given number of solutions for the given puzzle using z3,
     if no number is given then all solutions will be returned. """
     poss, bvars, solver = _initialize(puzzle)
-    start = time.time()
+    # print(solver)
 
     solutions = []
     while (number is None or len(solutions) < number) and solver.check() == sat:
         solution = [(x, y) for (x, y) in poss if solver.model()[bvars[x, y]]]
         solutions.append(solution)
         solver.add(Not(And([bvars[x, y] for (x, y) in solution])))
+        display(puzzle, solution)
+        print()
+        print(solver)
 
-    end = time.time()
-    return solutions, end - start
+    return solutions

@@ -2,8 +2,8 @@ from constants import *
 
 
 def display(puzzle, solution=None):
-    for y, row in enumerate(puzzle):
-        for x, cell in enumerate(row):
+    for y in range(len(puzzle)):
+        for x in range(len(puzzle[y])):
             if solution is not None and (x, y) in solution:
                 print('X', end='')
             elif puzzle[y][x] == N:

@@ -12,22 +12,32 @@ from tracksolver import tracksolve, tracksolves, trackunique
 
 def main():
     # for index in range(100):
-        # puzzle, solution = generate(40, 40, 170, 3, YAXIS)
+        # puzzle, solution = generate(5, 5, 0, 1, YAXIS)
         # display(puzzle)
-        # print(index, '\n')
-        # writecodex('misc/generated/40x40', puzzle)
+        # writecodex('misc/generated/5x5', puzzle)
 
-    # puzzle = loadpuzzle('misc/web/7x7_easy', 0, 7, 7)
-    # solution, time, (whole, part) = tracksolve(puzzle, True)
+    # for index in range(20):
+        # puzzle = loadpuzzle('misc/generated/30x30', index, 30, 30)
+        # for _ in range(9):
+            # solutions = z3solves(puzzle)
+            # print(len(solutions), end='\t', flush=True)
+        # print()
+
+    # puzzle = [
+        # [B,1,N,1,N,1,B],
+        # [0,N,N,N,N,N,0]]
+    # solution = tracksolve(puzzle)
     # display(puzzle, solution)
-    # print(time, whole, part, part / whole)
 
-    for index in range(80):
-        puzzle = loadpuzzle('misc/generated/30x30', index, 30, 30)
-        for _ in range(9):
-            solutions, time = z3solves(puzzle, 9)
-            print(len(solutions), end='', flush=True)
-        print()
+    # for index in range(22, 23):
+        # puzzle = loadpuzzle('misc/generated/5x5', index, 5, 5)
+        # for _ in range(0, 3):
+            # solutions = z3solves(puzzle)
+            # for solution in solutions:
+                # print()
+                # # display(puzzle, solution)
+            # print('---------')
+        # print()
 
 
 if __name__ == '__main__':
