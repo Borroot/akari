@@ -1,5 +1,6 @@
 import time
 
+from printer import display
 from constants import *
 
 
@@ -23,6 +24,8 @@ def _remove_list(x, y, collection):
     try:
         collection.remove((x, y))
     except KeyError:
+        pass
+    except ValueError:
         pass
 
 
@@ -72,7 +75,7 @@ def _trivialsolve(puzzle, poss, shadows, candidates):
     _remove_zeros(puzzle, poss, shadows, candidates)
     solution = []
 
-    walls = [(x, y) for x, y in poss if 0 <= puzzle[y][x] <= 4]
+    walls = [(x, y) for x, y in poss if 1 <= puzzle[y][x] <= 4]
     done = False
 
     while not done:
@@ -96,6 +99,27 @@ def _trivialsolve(puzzle, poss, shadows, candidates):
     return solution
 
 
+def _wall_unsatisfiable(puzzle, poss, solution, candidates):
+    """ Check if there exists a constraint wall which cannot be satisfied. """
+    walls = [(x, y) for x, y in poss if 1 <= puzzle[y][x] <= 4]
+    for x, y in walls:
+        neighbours = _neighbours(puzzle, x, y)
+        number = puzzle[y][x] - len([n for n in neighbours if n in solution])
+        if number > len([n for n in neighbours if n in candidates]):
+            return True
+    return False
+
+
+def _walls_satisfied(puzzle, poss, solution):
+    """ Check if all the constraint walls are satisfied. """
+    walls = [(x, y) for x, y in poss if 1 <= puzzle[y][x] <= 4]
+    for x, y in walls:
+        neighbours = _neighbours(puzzle, x, y)
+        if len([n for n in neighbours if n in solution]) != puzzle[y][x]:
+            return False
+    return True
+
+
 def _sort_candidates(puzzle, candidates):
     """ Sort the candidates list such that the cells next to constraint walls
     are first, the lower the constraint the better. """
@@ -108,30 +132,40 @@ def _sort_candidates(puzzle, candidates):
     return candidates
 
 
-def _backtracksolve(puzzle, shadows, candidates, solution, solutions, number, branches):
+def _backtracksolve(puzzle, poss, shadows, candidates, solution, solutions, number, branches):
     if len(solutions) == number:
         return
 
-    if len(shadows) == 0:
+    if len(shadows) == 0 and _walls_satisfied(puzzle, poss, solution):
         solutions.append(solution.copy())
         branches.append(branches[0])
         return
 
-    if len(candidates) == 0:  # TODO or a constraint is unsatisfiable
+    if len(candidates) == 0 or _wall_unsatisfiable(puzzle, poss, solution, candidates):
         return
 
-    # TODO Pop first from candidates list and try with and without a light bulb
-    # on that cell. Send a copy of the shadows and candidates list in the call.
-    # TODO Add a counter for the difficulty level (branching factor).
+    branches[0] += 1
+
+    candidate = candidates.pop()
+    _shadows, _candidates = shadows.copy(), candidates.copy()
+
+    # Try with a light bulb at this place.
+    _place_bulb(puzzle, *candidate, shadows, candidates, solution)
+    solution.append(candidate)
+    _backtracksolve(puzzle, poss, shadows, candidates, solution, solutions, number, branches)
+
+    # Try with no light bulb at this place.
+    solution.pop()
+    _backtracksolve(puzzle, poss, _shadows, _candidates, solution, solutions, number, branches)
 
 
-def trackdifficulty(puzzle):
+def trackdifficulty(puzzle, number=None):
     solutions, difficulty = _trackanalyse(puzzle, number)
     return difficulty
 
 
 def trackunique(puzzle):
-    solutions = tracksolves(puzzle, 2, stats)
+    solutions = tracksolves(puzzle, 2)
     return len(solutions) == 1 if len(solutions) > 0 else None
 
 
@@ -156,7 +190,6 @@ def _trackanalyse(puzzle, number=None):
     branches = [0]
     if solution is not None:
         candidates = _sort_candidates(puzzle, list(candidates))
-        _backtracksolve(puzzle, shadows, candidates, solution, solutions, number, branches)
+        _backtracksolve(puzzle, poss, shadows, candidates, solution, solutions, number, branches)
 
-    solutions.append(solution)  # TODO remove me!
     return solutions, (whole, part, branches)
