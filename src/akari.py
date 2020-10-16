@@ -25,7 +25,7 @@ def main():
 
     puzzle = [
         [B,1,N,1,N,1,B],
-        [0,N,N,N,N,N,0]]
+        [N,N,N,N,N,N,N]]
     solution = tracksolve(puzzle)
     display(puzzle, solution)
 
