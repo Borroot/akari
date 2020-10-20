@@ -33,10 +33,10 @@ def _loadline(filename, index):
 def _loadlines(filename):
     """ Load all the lines in the file according to the hans format. """
     with open(filename) as fp:
-        width = height = int(fp.readline())
-        hans = []
-        for _ in range(height):
-            hans.append(fp.readline())
+        meta = list(map(int, fp.readline().strip().split(" ")))
+        width = meta[0]
+        height = meta[1] if len(meta) > 1 else width
+        hans = [fp.readline().strip() for _ in range(height)]
     return hans, height, width
 
 
@@ -46,14 +46,14 @@ def _codextopuzzle(codex, height, width):
     count = 0
     for c in codex:
         if c == 'B':
-            puzzle[count // height][count % width] = B
+            puzzle[count // width][count % width] = B
             count += 1
         elif c in '01234':
-            puzzle[count // height][count % width] = ord(c) - ord('0')
+            puzzle[count // width][count % width] = ord(c) - ord('0')
             count += 1
         else:
             while c >= 'a':
-                puzzle[count // height][count % width] = N
+                puzzle[count // width][count % width] = N
                 count += 1
                 c = chr(ord(c) - 1)
 
@@ -95,13 +95,13 @@ def _hanstopuzzle(hans, height, width):
     for line in hans:
         for c in line:
             if c == '*':
-                puzzle[count // height][count % width] = B
+                puzzle[count // width][count % width] = B
                 count += 1
             elif c in '01234':
-                puzzle[count // height][count % width] = ord(c) - ord('0')
+                puzzle[count // width][count % width] = ord(c) - ord('0')
                 count += 1
             elif c == '-':
-                puzzle[count // height][count % width] = N
+                puzzle[count // width][count % width] = N
                 count += 1
 
     return puzzle

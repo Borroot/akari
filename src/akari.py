@@ -11,10 +11,10 @@ from tracksolver import tracksolve, tracksolves, trackunique, trackdifficulty
 
 
 def main():
-    for index in range(300):
-        puzzle = loadpuzzle('misc/web/14x14_easy', index, 14, 14)
-        whole, part, branches = trackdifficulty(puzzle)
-        print(part, branches[0])
+    # for index in range(300):
+        # puzzle = loadpuzzle('misc/web/14x14_easy', index, 14, 14)
+        # whole, part, branches = trackdifficulty(puzzle)
+        # print(part, branches[0])
 
     # for index in range(100):
         # puzzle, solution = generate(5, 5, 0, 1, YAXIS)
