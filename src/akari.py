@@ -11,6 +11,11 @@ from tracksolver import tracksolve, tracksolves, trackunique, trackdifficulty
 
 
 def main():
+    filename = 'misc/gadgets/3/wires'
+    puzzle = loadhans(filename)
+    display(puzzle)
+    draw(puzzle, filename)
+
     # for index in range(300):
         # puzzle = loadpuzzle('misc/web/14x14_easy', index, 14, 14)
         # whole, part, branches = trackdifficulty(puzzle)
