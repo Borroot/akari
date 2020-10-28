@@ -41,7 +41,7 @@ def z3solves(puzzle, number=None):
         solutions.append(solution)
         solver.add(Not(And([bvars[x, y] for (x, y) in solution])))
         display(puzzle, solution)
-        print()
-        print(solver)
+        # print()
+        # print(solver)
 
     return solutions
