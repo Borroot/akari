@@ -11,25 +11,10 @@ from tracksolver import tracksolve, tracksolves, trackunique, trackdifficulty
 
 
 def main():
-    # for index in range(300):
-        # puzzle = loadpuzzle('misc/web/14x14_easy', index, 14, 14)
-        # whole, part, branches = trackdifficulty(puzzle)
-        # print(part, branches[0])
-
-    # for index in range(100):
-        # puzzle, solution = generate(5, 5, 0, 1, YAXIS)
-        # display(puzzle)
-        # writecodex('misc/generated/5x5', puzzle)
-
-    for index in range(22, 23):
-        puzzle = loadpuzzle('misc/generated/5x5', index, 5, 5)
-        for _ in range(0, 3):
-            solutions = z3solves(puzzle)
-            for solution in solutions:
-                print()
-                # display(puzzle, solution)
-            print('---------')
-        print()
+    for index in range(300):
+        puzzle = loadpuzzle('misc/web/7x7_hard', index, 7, 7)
+        unique = z3unique(puzzle)
+        print(index, unique, sep='\t')
 
 
 if __name__ == '__main__':

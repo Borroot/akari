@@ -8,7 +8,7 @@ def _validpos(puzzle, x, y):
     return 0 <= y < len(puzzle) and 0 <= x < len(puzzle[0])
 
 
-def _constraints_wall(puzzle, solver, bvars, x, y):
+def _constraints_wall(puzzle, constraints, bvars, x, y):
     """ The given x and y values represent a wall on the board with a number,
     n, constraint. From the neighbours of this wall exactly n neighbours need
     to be true, this function adds this constraint. """
@@ -18,18 +18,18 @@ def _constraints_wall(puzzle, solver, bvars, x, y):
         if _validpos(puzzle, newx, newy) and puzzle[newy][newx] == N:
             neighbours.append((bvars[newx, newy], 1))
 
-    solver.add(PbEq(neighbours, puzzle[y][x]))
+    constraints.append(PbEq(neighbours, puzzle[y][x]))
 
 
-def _constraints_walls(puzzle, solver, bvars, poss):
+def _constraints_walls(puzzle, constraints, bvars, poss):
     """ Loop over all the walls with a number constraint and add the
     constraints. """
     walls = [(x, y) for (x, y) in poss if 0 <= puzzle[y][x] <= 4]
     for x, y in walls:
-        _constraints_wall(puzzle, solver, bvars, x, y)
+        _constraints_wall(puzzle, constraints, bvars, x, y)
 
 
-def _constraints_lines_atleastone(puzzle, solver, bvars, poss):
+def _constraints_lines_atleastone(puzzle, constraints, bvars, poss):
     """ Add a constraint such that every cell is lit up. This is done by adding
     a constraint for every cell looking in all directions and demanding a light
     bulb in at least one of the directions (or at the place itself). """
@@ -42,10 +42,10 @@ def _constraints_lines_atleastone(puzzle, solver, bvars, poss):
                 atleastone.append(bvars[newx, newy])
                 newx, newy = newx + dx, newy + dy
 
-        solver.add(Or(atleastone))
+        constraints.append(Or(atleastone))
 
 
-def _constraints_lines_atmostone(puzzle, solver, bvars, poss):
+def _constraints_lines_atmostone(puzzle, constraints, bvars, poss):
     """ Add a constraint such that no two light bulbs illuminate each other.
     This is done by making sure that for every straight line (horizontal or
     vertical) on the board (interrupted by walls) there is never more than one
@@ -66,10 +66,12 @@ def _constraints_lines_atmostone(puzzle, solver, bvars, poss):
                 newx, newy = newx + dx, newy + dy
 
             if len(atmostone) > 1:
-                solver.add(PbLe(atmostone, 1))
+                constraints.append(PbLe(atmostone, 1))
 
 
-def constraints_all(puzzle, solver, poss, bvars):
-    _constraints_walls(puzzle, solver, bvars, poss)
-    _constraints_lines_atleastone(puzzle, solver, bvars, poss)
-    _constraints_lines_atmostone(puzzle, solver, bvars, poss)
+def constraints_all(puzzle, poss, bvars):
+    constraints = []
+    _constraints_walls(puzzle, constraints, bvars, poss)
+    _constraints_lines_atleastone(puzzle, constraints, bvars, poss)
+    _constraints_lines_atmostone(puzzle, constraints, bvars, poss)
+    return constraints
