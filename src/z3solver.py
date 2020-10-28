@@ -12,17 +12,11 @@ def _initialize(puzzle):
     return poss, bvars
 
 
-def _solver(constraints, bvars=None, solutions=None):
+def _solver(constraints):
     """ Initialize the solver with all the constraints. """
     solver = Solver()
-
     for constraint in constraints:
         solver.add(constraint)
-
-    if bvars is not None and solutions is not None:
-        for solution in solutions:
-            solver.add(Not(And([bvars[x, y] for (x, y) in solution])))
-
     return solver
 
 
@@ -50,6 +44,7 @@ def z3solves(puzzle, number=None):
     while (number is None or len(solutions) < number) and solver.check() == sat:
         solution = [(x, y) for (x, y) in poss if solver.model()[bvars[x, y]]]
         solutions.append(solution)
-        solver = _solver(constraints, bvars, solutions)
+        constraints.append(Not(And([bvars[x, y] for (x, y) in solution])))
+        solver = _solver(constraints)
 
     return solutions
