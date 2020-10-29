@@ -43,9 +43,10 @@ def _random_location(puzzle, poss, solutions=None):
     choices = ([(x, y) for (x, y) in poss if puzzle[y][x] == N])
     distro = [_heuristic(puzzle, x, y, solutions) for (x, y) in choices]
     distro = [(max(distro) + 0.1 - x) ** 10 for x in distro]
-    distro = [x / sum(distro) if sum(distro) > 0 else 1 / len(distro) for x in distro]
 
+    distro = [x / sum(distro) if sum(distro) > 0 else 1 / len(distro) for x in distro]
     index = random.choice(np.arange(len(choices)), p=distro)
+
     return choices[index]
 
 
@@ -110,10 +111,11 @@ def generate(height, width, start=None, step=None, symmetrical=None, seed=None):
     step = min(1, big // 3) if step is None else step
 
     _place_blocks(puzzle, poss, start, symmetrical)
+    _place_numbers(puzzle, poss)
     while len(solutions := z3solves(puzzle, 2)) > 1:
         _remove_all_numbers(puzzle, poss)
         _place_blocks(puzzle, poss, step, symmetrical, solutions)
         _place_numbers(puzzle, poss)
 
     _remove_some_numbers(puzzle, poss)
-    return puzzle, z3solve(puzzle)
+    return puzzle
