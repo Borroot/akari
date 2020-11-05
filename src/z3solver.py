@@ -20,15 +20,15 @@ def _solver(constraints):
     return solver
 
 
-def z3unique(puzzle):
+def z3unique(puzzle, lights=[]):
     """ Check if the given puzzle has exactly one unique solution using z3. """
-    solutions = z3solves(puzzle, 2)
+    solutions = z3solves(puzzle, 2, lights)
     return len(solutions) == 1 if len(solutions) > 0 else None
 
 
-def z3solve(puzzle):
+def z3solve(puzzle, lights=[]):
     """ Search for one solution for the given puzzle using z3. """
-    solutions = z3solves(puzzle, 1)
+    solutions = z3solves(puzzle, 1, lights)
     return solutions[0] if len(solutions) == 1 else None
 
 

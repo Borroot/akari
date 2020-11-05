@@ -11,10 +11,14 @@ from tracksolver import tracksolve, tracksolves, trackunique, trackdifficulty
 
 
 def main():
-    for name in ['not', 'or', 'split', 'true', 'wires']:
-        puzzle = loadgrid('misc/gadgets/1/' + name)
-        display(puzzle, z3solve(puzzle))
-        print()
+    puzzle, inputs, outputs = loadverify('misc/verified/1/split')
+    display(puzzle, z3solves(puzzle, lights=[(1,1)])[0])
+    print(inputs, outputs, sep='\n')
+
+    # for name in ['not', 'or', 'split', 'true', 'wires']:
+        # puzzle = loadgrid('misc/gadgets/1/' + name)
+        # display(puzzle, z3solve(puzzle))
+        # print()
 
 
 if __name__ == '__main__':
