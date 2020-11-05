@@ -33,7 +33,10 @@ def z3solve(puzzle, trues=[], falses=[]):
 
 
 def z3solves(puzzle, number=None, trues=[], falses=[]):
-    """ Search for the given number of solutions for the given puzzle using z3, if no number is given then all solutions will be returned. The trues variable contains positions where light bulbs need to be placed, falses contains positions where no light bulb is allowed. """
+    """ Search for the given number of solutions for the given puzzle using z3,
+    if no number is given then all solutions will be returned. The trues
+    variable contains positions where light bulbs need to be placed, falses
+    contains positions where no light bulb is allowed. """
     poss, bvars = _initialize(puzzle)
 
     constraints = constraints_all(puzzle, poss, bvars)
@@ -42,7 +45,7 @@ def z3solves(puzzle, number=None, trues=[], falses=[]):
 
     solver = _solver(constraints)
     solutions = []
-    while (number is None or len(solutions) < number) and solver.check() == sat:
+    while (number is None or len(solutions) < number) and solver.check()==sat:
         solution = [(x, y) for (x, y) in poss if solver.model()[bvars[x, y]]]
         solutions.append(solution)
         constraints.append(Not(And([bvars[x, y] for (x, y) in solution])))

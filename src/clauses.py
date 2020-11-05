@@ -1,3 +1,5 @@
+""" These clauses describe what is the expected output for a given input. """
+
 NOT = \
     [[[ True], [False]],
      [[False], [ True]]]

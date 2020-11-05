@@ -8,6 +8,7 @@ FOLDER = 'misc/verified'
 
 
 def verify_clause(gadget, inputs, outputs, clause):
+    """ Verify if the given clause is always satisfied in the gadget. """
     given_trues  = []  # given to z3,  needs to be true
     given_falses = []  # given to z3,  needs to be false
     check_trues  = []  # for checking, needs to be true
@@ -33,10 +34,10 @@ def verify_clause(gadget, inputs, outputs, clause):
             check_trues.append(outputs[index][1])
 
     solutions = z3solves(gadget, trues=given_trues, falses=given_falses)
-
     if len(solutions) == 0:
         return False
 
+    # Check if all the solutions give the expected output from the gadget.
     for solution in solutions:
         if any(t not in solutions[0] for t in check_trues) or \
            any(f     in solutions[0] for f in check_falses):
@@ -45,6 +46,7 @@ def verify_clause(gadget, inputs, outputs, clause):
 
 
 def verify_gadget(proof, name):
+    """ Verify if all clauses for the given gadget are satisfied. """
     gadget, inputs, outputs = loadverify(f'{FOLDER}/{proof}/{name}')
     for i, clause in enumerate(CLAUSES[name]):
         if verify_clause(gadget, inputs, outputs, clause):
@@ -56,10 +58,12 @@ def verify_gadget(proof, name):
 
 
 def verify_proof(proof):
+    """ Verify if all the gadgets for the given proof are satisfied. """
     return all(verify_gadget(proof, name) for name in GADGETS)
 
 
 def verify_all():
+    """ Verify if all the proofs are correct. """
     if all(verify_proof(proof) for proof in range(1,4)):
         print("All the gadgets are CORRECT!")
         return True
