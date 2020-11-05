@@ -11,8 +11,10 @@ from tracksolver import tracksolve, tracksolves, trackunique, trackdifficulty
 
 
 def main():
-    puzzle = generate(5, 5)
-    display(puzzle, z3solve(puzzle))
+    for name in ['not', 'or', 'split', 'true', 'wires']:
+        puzzle = loadgrid('misc/gadgets/1/' + name)
+        display(puzzle, z3solve(puzzle))
+        print()
 
 
 if __name__ == '__main__':

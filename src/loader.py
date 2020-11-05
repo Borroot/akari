@@ -1,16 +1,16 @@
 from constants import *
 
 
-def loadpuzzle(filename, index, height, width):
+def loadcodex(filename, index, height, width):
     """ Load the codex formatted puzzle from the specified line in the given file. """
     codex = _loadline(filename, index)
     return _codextopuzzle(codex, height, width)
 
 
-def loadhans(filename):
-    """ Load the hans formatted puzzle from the given file. """
-    hans, height, width = _loadlines(filename)
-    return _hanstopuzzle(hans, height, width)
+def loadgrid(filename):
+    """ Load the grid formatted puzzle from the given file. """
+    grid = _loadlines(filename)
+    return _gridtopuzzle(grid)
 
 
 def writecodex(filename, puzzle):
@@ -18,7 +18,7 @@ def writecodex(filename, puzzle):
         fp.write(_puzzletocodex(puzzle) + '\n')
 
 
-def writehans(filename, puzzle):
+def writegrid(filename, puzzle):
     pass
 
 
@@ -31,13 +31,9 @@ def _loadline(filename, index):
 
 
 def _loadlines(filename):
-    """ Load all the lines in the file according to the hans format. """
+    """ Load all the lines in the file according to the grid format. """
     with open(filename) as fp:
-        meta = list(map(int, fp.readline().strip().split(" ")))
-        width = meta[0]
-        height = meta[1] if len(meta) > 1 else width
-        hans = [fp.readline().strip() for _ in range(height)]
-    return hans, height, width
+        return [line.strip() for line in fp.readlines()]
 
 
 def _codextopuzzle(codex, height, width):
@@ -88,11 +84,13 @@ def _puzzletocodex(puzzle):
     return builder
 
 
-def _hanstopuzzle(hans, height, width):
-    """ Create a puzzle from the given hans formatted string. """
-    puzzle = [list(range(width)) for _ in range(height)]
+def _gridtopuzzle(grid):
+    """ Create a puzzle from the given grid formatted string. """
+    width = len(grid[0])
+    puzzle = [list(range(width)) for _ in range(len(grid))]
+
     count = 0
-    for line in hans:
+    for line in grid:
         for c in line:
             if c == '*':
                 puzzle[count // width][count % width] = B
@@ -107,5 +105,5 @@ def _hanstopuzzle(hans, height, width):
     return puzzle
 
 
-def _puzzletohans(puzzle):
+def _puzzletogrid(puzzle):
     pass

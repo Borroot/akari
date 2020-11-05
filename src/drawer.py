@@ -52,7 +52,7 @@ def _draw_bulbs(im, solution):
 
     for x, y in solution:
         top, bot = _draw_box(x, y)
-        middle = (top[0] + int(_MAGNIFIER * 0.17), top[1] + int(_MAGNIFIER * 0.2))
+        middle = (top[0] + int(_MAGNIFIER*0.17), top[1] + int(_MAGNIFIER*0.2))
         im.paste(bulb, middle)
 
 
