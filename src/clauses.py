@@ -24,4 +24,5 @@ WIRES =
      [[ True], [ True]]]
 
 
-ALL = {'not':NOT, 'or':OR, 'split':SPLIT, 'true':TRUE, 'wires':WIRES}
+CLAUSES = {'not':NOT, 'or':OR, 'split':SPLIT, 'true':TRUE, 'wires':WIRES}
+GADGETS = ['not', 'or', 'split', 'true', 'wires']

@@ -12,7 +12,7 @@ from tracksolver import tracksolve, tracksolves, trackunique, trackdifficulty
 
 def main():
     puzzle, inputs, outputs = loadverify('misc/verified/1/split')
-    display(puzzle, z3solves(puzzle, lights=[(1,1)])[0])
+    display(puzzle, z3solves(puzzle, trues=[(1,1)])[0])
     print(inputs, outputs, sep='\n')
 
     # for name in ['not', 'or', 'split', 'true', 'wires']:
