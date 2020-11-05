@@ -1,25 +1,25 @@
-NOT =
+NOT = \
     [[[ True], [False]],
      [[False], [ True]]]
 
 
-OR =
+OR = \
     [[[False, False], [False]],
      [[False,  True], [ True]],
      [[ True, False], [ True]],
      [[ True,  True], [ True]]]
 
 
-SPLIT =
+SPLIT = \
     [[[False], [False, False]],
      [[ True], [ True,  True]]]
 
 
-TRUE =
+TRUE = \
     [[[True], []]]
 
 
-WIRES =
+WIRES = \
     [[[False], [False]],
      [[ True], [ True]]]
 
