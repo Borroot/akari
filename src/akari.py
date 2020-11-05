@@ -12,7 +12,7 @@ from verifier import verify_all
 
 
 def main():
-    print(verify_all())
+    verify_all()
 
 
 if __name__ == '__main__':

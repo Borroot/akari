@@ -33,6 +33,7 @@ def verify_clause(gadget, inputs, outputs, clause):
             check_trues.append(outputs[index][1])
 
     solutions = z3solves(gadget, trues=given_trues, falses=given_falses)
+
     if len(solutions) == 0:
         return False
 
@@ -44,8 +45,14 @@ def verify_clause(gadget, inputs, outputs, clause):
 
 
 def verify_gadget(proof, name):
-    gadget, ins, outs = loadverify(f'{FOLDER}/{proof}/{name}')
-    return all(verify_clause(gadget, ins, outs, c) for c in CLAUSES[name])
+    gadget, inputs, outputs = loadverify(f'{FOLDER}/{proof}/{name}')
+    for clause in CLAUSES[name]:
+        if verify_clause(gadget, inputs, outputs, clause):
+            print(f'CORRECT {proof}/{name}')
+        else:
+            print(f'INCORRECT {proof}/{name}')
+            return False
+    return True
 
 
 def verify_proof(proof):
@@ -53,4 +60,8 @@ def verify_proof(proof):
 
 
 def verify_all():
-    return all(verify_proof(proof) for proof in range(1,4))
+    if all(verify_proof(proof) for proof in range(1,4)):
+        print("All gadgets are CORRECT!")
+        return True
+    else:
+        return False
