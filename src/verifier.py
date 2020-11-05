@@ -46,11 +46,11 @@ def verify_clause(gadget, inputs, outputs, clause):
 
 def verify_gadget(proof, name):
     gadget, inputs, outputs = loadverify(f'{FOLDER}/{proof}/{name}')
-    for clause in CLAUSES[name]:
+    for i, clause in enumerate(CLAUSES[name]):
         if verify_clause(gadget, inputs, outputs, clause):
-            print(f'CORRECT {proof}/{name}')
+            print(f'CORRECT case {i+1} - {proof}/{name}')
         else:
-            print(f'INCORRECT {proof}/{name}')
+            print(f'INCORRECT case {i+1} - {proof}/{name}')
             return False
     return True
 
@@ -61,7 +61,7 @@ def verify_proof(proof):
 
 def verify_all():
     if all(verify_proof(proof) for proof in range(1,4)):
-        print("All gadgets are CORRECT!")
+        print("All the gadgets are CORRECT!")
         return True
     else:
         return False
