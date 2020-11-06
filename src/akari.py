@@ -7,7 +7,7 @@ from constants import *
 from drawer import draw
 from generator import generate, XAXIS, YAXIS, XYAXIS
 from z3solver import z3solve, z3solves, z3unique
-from tracksolver import tracksolve, tracksolves, trackunique, trackdifficulty
+from tracksolver import *
 from verifier import verify_all
 
 

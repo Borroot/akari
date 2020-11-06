@@ -99,6 +99,11 @@ def _trivialsolve(puzzle, poss, shadows, candidates):
     return solution
 
 
+def trivialsolve(puzzle):
+    poss, shadows, candidates = _initialize(puzzle)
+    return _trivialsolve(puzzle, poss, shadows, candidates)
+
+
 def _wall_unsatisfiable(puzzle, poss, solution, candidates):
     """ Check if there exists a constraint wall which cannot be satisfied. """
     walls = [(x, y) for x, y in poss if 1 <= puzzle[y][x] <= 4]
