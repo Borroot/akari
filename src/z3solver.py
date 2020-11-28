@@ -22,7 +22,7 @@ def _solver(constraints):
 
 def z3unique(puzzle, trues=[], falses=[]):
     """ Check if the given puzzle has exactly one unique solution using z3. """
-    solutions = z3solves(puzzle, 2, trues, falses=[])
+    solutions = z3solves(puzzle, 2, trues, falses)
     return len(solutions) == 1 if len(solutions) > 0 else None
 
 

@@ -1,5 +1,6 @@
-from z3solver import z3solves
-from clauses import *
+from constraints import constraints_all
+from z3 import *
+import z3solver
 from loader import loadverify
 from printer import display
 
@@ -7,54 +8,51 @@ from printer import display
 FOLDER = 'misc/verified'
 
 
-def verify_clause(gadget, inputs, outputs, clause):
-    """ Verify if the given clause is always satisfied in the gadget. """
-    given_trues  = []  # given to z3,  needs to be true
-    given_falses = []  # given to z3,  needs to be false
-    check_trues  = []  # for checking, needs to be true
-    check_falses = []  # for checking, needs to be false
+GADGETS = ['not', 'or', 'split', 'true', 'wires']
+Neq = lambda a, b: Or(And(a, Not(b)), And(Not(a), b))
 
-    # The only info given to z3 is if the (sending, x) input (not the
-    # receiving input, x') needs to be true or false.
-    for index, value in enumerate(clause[0]):
-        if value:
-            given_trues.append(inputs[index][0])
-            check_falses.append(inputs[index][1])
-        else:
-            given_falses.append(inputs[index][0])
-            check_trues.append(inputs[index][1])
 
-    # Add all the output fields to be checked after solving the gadget.
-    for index, value in enumerate(clause[1]):
-        if value:
-            check_trues.append(outputs[index][0])
-            check_falses.append(outputs[index][1])
-        else:
-            check_falses.append(outputs[index][0])
-            check_trues.append(outputs[index][1])
+def gadget_clause(name, inps, outs, bvars):
+    """ Return a constraint specific for this gadget. """
+    if name == 'not':
+        return Neq(bvars[inps[0]], Not(bvars[outs[0]]))
+    if name == 'or':
+        return Neq(Or(bvars[inps[0]], bvars[inps[1]]), bvars[outs[0]])
+    if name == 'split':
+        return Or(Neq(bvars[inps[0]], bvars[outs[0]]), \
+                  Neq(bvars[inps[0]], bvars[outs[1]]))
+    if name == 'true':
+        return Not(bvars[inps[0]])
+    if name == 'wires':
+        return Neq(bvars[inps[0]], bvars[outs[0]])
 
-    solutions = z3solves(gadget, trues=given_trues, falses=given_falses)
-    if len(solutions) == 0:
-        return False
 
-    # Check if all the solutions give the expected output from the gadget.
-    for solution in solutions:
-        if any(t not in solutions[0] for t in check_trues) or \
-           any(f     in solutions[0] for f in check_falses):
-            return False
-    return True
+def verify_z3(gadget, name, inputs, outputs):
+    """ Check if a given gadget is according to its specification. """
+    poss, bvars = z3solver._initialize(gadget)
+    constraints = constraints_all(gadget, poss, bvars)
+
+    # Make sure that for every variable x we have x != x'.
+    for var in inputs + outputs:
+        constraints.append(Neq(bvars[var[0]], bvars[var[1]]))
+
+    # Take out all x', for simplicity we now only construct with x.
+    inputs  = [inp[0] for inp in inputs]
+    outputs = [out[0] for out in outputs]
+
+    constraints.append(gadget_clause(name, inputs, outputs, bvars))
+    return z3solver._solver(constraints).check() == unsat
 
 
 def verify_gadget(proof, name):
     """ Verify if all clauses for the given gadget are satisfied. """
     gadget, inputs, outputs = loadverify(f'{FOLDER}/{proof}/{name}')
-    for i, clause in enumerate(CLAUSES[name]):
-        if verify_clause(gadget, inputs, outputs, clause):
-            print(f'CORRECT case {i+1} - {proof}/{name}')
-        else:
-            print(f'INCORRECT case {i+1} - {proof}/{name}')
-            return False
-    return True
+    if verify_z3(gadget, name, inputs, outputs):
+        print(f'CORRECT {proof}/{name}')
+        return True
+    else:
+        print(f'INCORRECT {proof}/{name}')
+        return False
 
 
 def verify_proof(proof):
