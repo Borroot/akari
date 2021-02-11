@@ -101,7 +101,7 @@ def _place_numbers(puzzle, poss):
         puzzle[y][x] = count
 
 
-def generate(height, width, start=None, step=None, symmetrical=None, seed=None):
+def generate(height, width, start=None, step=None, symmetry=None, seed=None):
     puzzle = [[N for _ in range(width)] for _ in range(height)]
     poss = [(x, y) for y in range(len(puzzle)) for x in range(len(puzzle[0]))]
     if seed is not None: random.seed(seed)
@@ -110,11 +110,11 @@ def generate(height, width, start=None, step=None, symmetrical=None, seed=None):
     start = big if start is None else min(start, (width * height) // 2)
     step = min(1, big // 3) if step is None else step
 
-    _place_blocks(puzzle, poss, start, symmetrical)
+    _place_blocks(puzzle, poss, start, symmetry)
     _place_numbers(puzzle, poss)
     while len(solutions := z3solves(puzzle, 2)) > 1:
         _remove_all_numbers(puzzle, poss)
-        _place_blocks(puzzle, poss, step, symmetrical, solutions)
+        _place_blocks(puzzle, poss, step, symmetry, solutions)
         _place_numbers(puzzle, poss)
 
     _remove_some_numbers(puzzle, poss)
