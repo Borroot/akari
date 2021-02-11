@@ -2,7 +2,7 @@ from z3 import *
 import time
 
 from printer import display
-from loader import *
+from loader import loadcodex, loadgrid, loadverify, writecodex
 from constants import *
 from drawer import draw
 from generator import generate, XAXIS, YAXIS, XYAXIS
@@ -12,14 +12,11 @@ from verifier import verify_all
 
 
 def main():
-    name = 'circuit'
-    puzzle = loadgrid('misc/showcase/' + name)
-
-    draw(puzzle, name, magnifier = 300)
+    puzzle = loadcodex('misc/internet/10x10_easy', 0, 10)
     solution = z3solve(puzzle)
 
-    for i, solution in enumerate(z3solves(puzzle)):
-        draw(puzzle, name + '_solve' + str(i), 300, solution)
+    display(puzzle, solution)
+    # draw(puzzle, 'puzzle', solution = solution, magnifier = 300)
 
 
 if __name__ == '__main__':
