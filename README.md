@@ -12,3 +12,6 @@ This repository contains a drawer for Akari puzzles which draws a nice image rep
 
 # Verifier
 This repository also includes a verifier program which can be used to verify the correctness of the gadgets I made for the NP-completeness proofs of variants on Akari. Let Akari-_n_ be a variant of Akari which only contains walls without number constraint and walls with the number constraint _n_. I proved that Akari without any number constraint walls and Akari-4 is in P. I proved that Akari-1, Akari-2 and Akari-3 are all NP-complete.
+
+# Paper
+I wrote a paper about Akari for my bachelor thesis which can be found [here](misc/paper/thesis.pdf).
